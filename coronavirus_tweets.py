@@ -6,6 +6,8 @@
 # corresponding to a path containing the wholesale_customers.csv file.\
 import pandas as pd
 import re
+import requests
+from collections import Counter
 def read_csv_3(data_file):
 	df = pd.read_csv(data_file, encoding='latin-1')
 	return df
@@ -49,17 +51,26 @@ def count_words_with_repetitions(tdf):
 
 # Given dataframe tdf with the tweets tokenized, return the number of distinct words in all tweets.
 def count_words_without_repetitions(tdf):
-	pass
+	word_set = set()
+	for tweet in tdf['OriginalTweet']:
+		word_set.update(set(tweet))
+	return len(word_set)
+	
 
 # Given dataframe tdf with the tweets tokenized, return a list with the k distinct words that are most frequent in the tweets.
 def frequent_words(tdf,k):
-	pass
+	words = sum(tdf['OriginalTweet'], [])  # Flatten the list of tokenized tweets
+	return [word for word, _ in Counter(words).most_common(k)] 
 
 # Given dataframe tdf with the tweets tokenized, remove stop words and words with <=2 characters from each tweet.
 # The function should download the list of stop words via:
 # https://raw.githubusercontent.com/fozziethebeat/S-Space/master/data/english-stop-words-large.txt
 def remove_stop_words(tdf):
-	pass
+	stop_words_url = "https://raw.githubusercontent.com/fozziethebeat/S-Space/master/data/english-stop-words-large.txt"
+	response = requests.get(stop_words_url)
+	stop_words = set(response.text.splitlines())
+	tdf["OriginalTweet"] = tdf["OriginalTweet"].apply(lambda x: [word for word in x if word not in stop_words and len(word) > 2])
+	return tdf
 
 # Given dataframe tdf with the tweets tokenized, reduce each word in every tweet to its stem.
 def stemming(tdf):
