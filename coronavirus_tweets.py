@@ -3,42 +3,49 @@
 # Return a pandas dataframe containing the data set.
 # Specify a 'latin-1' encoding when reading the data.
 # data_file will be populated with a string 
-# corresponding to a path containing the wholesale_customers.csv file.
+# corresponding to a path containing the wholesale_customers.csv file.\
+import pandas as pd
+import re
 def read_csv_3(data_file):
-	pass
+	df = pd.read_csv(data_file, encoding='latin-1')
+	return df
 
 # Return a list with the possible sentiments that a tweet might have.
 def get_sentiments(df):
-	pass
+	return df['Sentiment'].unique().tolist()
 
 # Return a string containing the second most popular sentiment among the tweets.
 def second_most_popular_sentiment(df):
-	pass
+	return df['Sentiment'].value_counts().index[1]
 
 # Return the date (string as it appears in the data) with the greatest number of extremely positive tweets.
 def date_most_popular_tweets(df):
-	pass
+	return df[df['Sentiment'] == 'Extremely Positive']['Date'].value_counts().idxmax()
 
 # Modify the dataframe df by converting all tweets to lower case. 
 def lower_case(df):
-	pass
+	df["OriginalTweet"].str.lower()
+	return df
 
 # Modify the dataframe df by replacing each characters which is not alphabetic or whitespace with a whitespace.
 def remove_non_alphabetic_chars(df):
-	pass
+	df = df.applymap(lambda x: re.sub(r'[^a-zA-Z\s]', ' ', x) if isinstance(x, str) else x)
+	return df
 
 # Modify the dataframe df with tweets after removing characters which are not alphabetic or whitespaces.
 def remove_multiple_consecutive_whitespaces(df):
-	pass
+	df = df.applymap(lambda x: re.sub(r'\s+', ' ', x) if isinstance(x, str) else x)
+	return df
 
 # Given a dataframe where each tweet is one string with words separated by single whitespaces,
 # tokenize every tweet by converting it into a list of words (strings).
 def tokenize(df):
-	pass
+	return df.applymap(lambda x: x.split() if isinstance(x, str) else x)
 
 # Given dataframe tdf with the tweets tokenized, return the number of words in all tweets including repetitions.
 def count_words_with_repetitions(tdf):
-	pass
+	word_count = tdf['OriginalTweet'].apply(lambda x: len(x))
+	return word_count.sum()
 
 # Given dataframe tdf with the tweets tokenized, return the number of distinct words in all tweets.
 def count_words_without_repetitions(tdf):
